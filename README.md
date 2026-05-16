@@ -14,7 +14,7 @@ Colocar el nombre y la libreria apuntando al repositorio y al tag que se quiere 
 
 Expone:
 
-- ssoAuthenticateMiddleware: Middleware con los parámetros de validación.
+- identityServiceMiddleware: Middleware con los parámetros de validación.
 - isValidEmail: Función para validar emails.
 - getKeycloakToken: Obtener el token de keycloak.
 - handleCreateKeycloakUser: Crear un usuario en keycloak.

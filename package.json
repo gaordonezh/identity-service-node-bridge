@@ -1,13 +1,37 @@
 {
-  "name": "identity-service",
+  "name": "identity-service-node-bridge",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
+  "main": "dist/auth.middleware.js",
+  "types": "dist/auth.middleware.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "dev": "tsx watch demo/server.ts",
+    "build": "tsc"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "jwks-rsa": "^4.0.1"
+  },
+  "devDependencies": {
+    "cors": "^2.8.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  },
+  "author": {
+    "email": "gaordonez@gmail.com",
+    "name": "German Ordoñez",
+    "url": "https://github.com/gaordonezh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaordonezh/identity-service-node-bridge.git"
+  }
 }

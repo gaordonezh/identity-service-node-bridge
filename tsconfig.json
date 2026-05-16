@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "CommonJS",
+    "target": "ES2022",
+    "module": "commonjs",
     "declaration": true,
     "rootDir": "./src",
     "outDir": "./dist",
