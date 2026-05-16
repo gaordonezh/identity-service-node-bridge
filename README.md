@@ -1,6 +1,6 @@
 # TypeScript + Express
 
-Este proyecto se usa como _Libreria de verificación de Keycloak tokens express_
+Este proyecto se usa como _Libreria para la verificación de tokens de *Identity Service*_
 
 ## Forma de uso
 
@@ -8,21 +8,14 @@ Colocar el nombre y la libreria apuntando al repositorio y al tag que se quiere 
 
 ```js
 "dependencies": {
-  "keycloak-auth-sso": "github:gaordonezh/keycloak-auth-sso#v1.1.0"
+  "identity-service-node-bridge": "github:gaordonezh/identity-service-node-bridge#v1.0.0"
 },
 ```
 
 Expone:
 
 - identityServiceMiddleware: Middleware con los parámetros de validación.
-- isValidEmail: Función para validar emails.
-- getKeycloakToken: Obtener el token de keycloak.
-- handleCreateKeycloakUser: Crear un usuario en keycloak.
-- handleUpdateKeycloakUser: Actualizar un usuario en keycloak.
 - types:
-  - KeycloakUserPayloadCreateProps
-  - KeycloakUserPayloadUpdateProps
-  - KeycloakTokenParamsProps
-  - KeycloakConfigProps
-  - KeycloakFrontendAccessConfigProps
-  - Express > Request > ssouser
+  - SSOJwtPayload
+  - IdentityServiceConfigProps
+  - Express > Request > auth
