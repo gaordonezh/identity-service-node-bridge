@@ -41,7 +41,10 @@ function identityServiceMiddleware(config) {
             algorithms: ["RS256"],
             clockTolerance: 5,
         }, (err, decoded) => {
-            console.log(err, decoded);
+            if (config.log) {
+                console.log("ERROR:", err);
+                console.log("DECODED:", decoded);
+            }
             if (err) {
                 return res.status(401).json({ error: "INVALID_TOKEN" });
             }

@@ -30,5 +30,6 @@ export interface IdentityServiceConfigProps {
     jwksUri: string;
     issuer: string;
     clientId: string;
+    log?: boolean;
 }
 export declare function identityServiceMiddleware(config: IdentityServiceConfigProps): RequestHandler;
