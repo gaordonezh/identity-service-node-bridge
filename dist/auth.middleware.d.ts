@@ -7,11 +7,22 @@ declare global {
     }
 }
 export interface SSOJwtPayload {
+    /**
+     * User ID
+     */
     sub: string;
+    /**
+     * Session ID
+     */
     sid: string;
     jti: string;
-    type: string;
-    aud: string;
+    fullname: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+    iat: number;
+    exp: number;
+    aud: Array<string>;
     iss: string;
     [x: string]: any;
 }

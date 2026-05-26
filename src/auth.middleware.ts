@@ -35,6 +35,7 @@ export interface IdentityServiceConfigProps {
   jwksUri: string;
   issuer: string;
   clientId: string;
+  log?: boolean;
 }
 
 export function identityServiceMiddleware(config: IdentityServiceConfigProps): RequestHandler {
@@ -81,7 +82,11 @@ export function identityServiceMiddleware(config: IdentityServiceConfigProps): R
         clockTolerance: 5,
       },
       (err, decoded) => {
-        console.log(err, decoded);
+        if (config.log) {
+          console.log("ERROR:", err);
+          console.log("DECODED:", decoded);
+        }
+
         if (err) {
           return res.status(401).json({ error: "INVALID_TOKEN" });
         }
