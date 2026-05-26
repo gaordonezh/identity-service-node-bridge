@@ -11,11 +11,22 @@ declare global {
 }
 
 export interface SSOJwtPayload {
+  /**
+   * User ID
+   */
   sub: string;
+  /**
+   * Session ID
+   */
   sid: string;
   jti: string;
-  type: string;
-  aud: string;
+  fullname: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  iat: number;
+  exp: number;
+  aud: Array<string>;
   iss: string;
   [x: string]: any;
 }
@@ -24,7 +35,6 @@ export interface IdentityServiceConfigProps {
   jwksUri: string;
   issuer: string;
   clientId: string;
-  // accessConfig: Array<KeycloakFrontendAccessConfigProps>;
 }
 
 export function identityServiceMiddleware(config: IdentityServiceConfigProps): RequestHandler {
@@ -79,17 +89,6 @@ export function identityServiceMiddleware(config: IdentityServiceConfigProps): R
         if (typeof decoded !== "object" || !decoded.sub || !decoded.sid) {
           return res.status(401).json({ error: "INVALID_PAYLOAD" });
         }
-
-        // VER LAS VALIDACIONES DE ESTE CÓDIGO DESPUÉS DE LOS AUDIENCES & ACCESOS
-        // const frontOriginClientId = decoded.azp;
-        // const record = config.accessConfig.find((r) => r.clientId === frontOriginClientId);
-        // if (!record) {
-        //   return res.status(403).json({ error: "FORBIDDEN" });
-        // }
-        // const roles = decoded.resource_access[frontOriginClientId]?.roles ?? [];
-        // if (!roles.includes(record.access)) {
-        //   return res.status(403).json({ error: "FORBIDDEN_" });
-        // }
 
         req.auth = decoded as SSOJwtPayload;
         next();
