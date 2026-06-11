@@ -20,7 +20,7 @@ export interface SSOJwtPayload {
    */
   sid: string;
   jti: string;
-  fullname: string;
+  photo: string;
   firstname: string;
   lastname: string;
   email: string;
@@ -36,6 +36,7 @@ export interface IdentityServiceConfigProps {
   issuer: string;
   clientId: string;
   log?: boolean;
+  passthrough?: boolean;
 }
 
 export function identityServiceMiddleware(config: IdentityServiceConfigProps): RequestHandler {
@@ -62,6 +63,11 @@ export function identityServiceMiddleware(config: IdentityServiceConfigProps): R
   };
 
   return (req: Request, res: Response, next: NextFunction) => {
+    if (config.passthrough) {
+      console.log("PASSTHROUGH");
+      return next();
+    }
+
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return res.status(401).json({ error: "TOKEN_WAS_NOT_PROVIDED" });
@@ -83,8 +89,7 @@ export function identityServiceMiddleware(config: IdentityServiceConfigProps): R
       },
       (err, decoded) => {
         if (config.log) {
-          console.log("ERROR:", err);
-          console.log("DECODED:", decoded);
+          console.log("[MIDDLEWARE_LOG]:", err, decoded);
         }
 
         if (err) {
