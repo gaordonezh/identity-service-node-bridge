@@ -63,19 +63,22 @@ export function identityServiceMiddleware(config: IdentityServiceConfigProps): R
   };
 
   return (req: Request, res: Response, next: NextFunction) => {
-    if (config.passthrough) {
-      console.log("PASSTHROUGH");
-      return next();
-    }
+    const rejectOrContinue = (error: string) => {
+      if (config.passthrough) {
+        return next();
+      }
+
+      return res.status(401).json({ error });
+    };
 
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({ error: "TOKEN_WAS_NOT_PROVIDED" });
+      return rejectOrContinue("TOKEN_WAS_NOT_PROVIDED");
     }
 
     const [scheme, token] = authHeader.split(" ");
     if (scheme !== "Bearer" || !token) {
-      return res.status(401).json({ error: "INVALID_AUTH_HEADER" });
+      return rejectOrContinue("INVALID_AUTH_HEADER");
     }
 
     jwt.verify(
@@ -93,15 +96,15 @@ export function identityServiceMiddleware(config: IdentityServiceConfigProps): R
         }
 
         if (err) {
-          return res.status(401).json({ error: "INVALID_TOKEN" });
+          return rejectOrContinue("INVALID_TOKEN");
         }
 
         if (typeof decoded !== "object" || !decoded.sub || !decoded.sid) {
-          return res.status(401).json({ error: "INVALID_PAYLOAD" });
+          return rejectOrContinue("INVALID_PAYLOAD");
         }
 
         req.auth = decoded as SSOJwtPayload;
-        next();
+        return next();
       },
     );
   };
