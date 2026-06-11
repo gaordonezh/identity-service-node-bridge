@@ -27,17 +27,19 @@ function identityServiceMiddleware(config) {
         });
     };
     return (req, res, next) => {
-        if (config.passthrough) {
-            console.log("PASSTHROUGH");
-            return next();
-        }
+        const rejectOrContinue = (error) => {
+            if (config.passthrough) {
+                return next();
+            }
+            return res.status(401).json({ error });
+        };
         const authHeader = req.headers.authorization;
         if (!authHeader) {
-            return res.status(401).json({ error: "TOKEN_WAS_NOT_PROVIDED" });
+            return rejectOrContinue("TOKEN_WAS_NOT_PROVIDED");
         }
         const [scheme, token] = authHeader.split(" ");
         if (scheme !== "Bearer" || !token) {
-            return res.status(401).json({ error: "INVALID_AUTH_HEADER" });
+            return rejectOrContinue("INVALID_AUTH_HEADER");
         }
         jsonwebtoken_1.default.verify(token, getKey, {
             issuer: config.issuer,
@@ -49,13 +51,13 @@ function identityServiceMiddleware(config) {
                 console.log("[MIDDLEWARE_LOG]:", err, decoded);
             }
             if (err) {
-                return res.status(401).json({ error: "INVALID_TOKEN" });
+                return rejectOrContinue("INVALID_TOKEN");
             }
             if (typeof decoded !== "object" || !decoded.sub || !decoded.sid) {
-                return res.status(401).json({ error: "INVALID_PAYLOAD" });
+                return rejectOrContinue("INVALID_PAYLOAD");
             }
             req.auth = decoded;
-            next();
+            return next();
         });
     };
 }
