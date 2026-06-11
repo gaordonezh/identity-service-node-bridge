@@ -16,7 +16,7 @@ export interface SSOJwtPayload {
      */
     sid: string;
     jti: string;
-    fullname: string;
+    photo: string;
     firstname: string;
     lastname: string;
     email: string;
@@ -31,5 +31,6 @@ export interface IdentityServiceConfigProps {
     issuer: string;
     clientId: string;
     log?: boolean;
+    passthrough?: boolean;
 }
 export declare function identityServiceMiddleware(config: IdentityServiceConfigProps): RequestHandler;

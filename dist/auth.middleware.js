@@ -27,6 +27,10 @@ function identityServiceMiddleware(config) {
         });
     };
     return (req, res, next) => {
+        if (config.passthrough) {
+            console.log("PASSTHROUGH");
+            return next();
+        }
         const authHeader = req.headers.authorization;
         if (!authHeader) {
             return res.status(401).json({ error: "TOKEN_WAS_NOT_PROVIDED" });
@@ -42,8 +46,7 @@ function identityServiceMiddleware(config) {
             clockTolerance: 5,
         }, (err, decoded) => {
             if (config.log) {
-                console.log("ERROR:", err);
-                console.log("DECODED:", decoded);
+                console.log("[MIDDLEWARE_LOG]:", err, decoded);
             }
             if (err) {
                 return res.status(401).json({ error: "INVALID_TOKEN" });
