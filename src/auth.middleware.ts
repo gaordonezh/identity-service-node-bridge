@@ -99,7 +99,7 @@ export function identityServiceMiddleware(config: IdentityServiceConfigProps): R
           return rejectOrContinue("INVALID_TOKEN");
         }
 
-        if (typeof decoded !== "object" || !decoded.sub || !decoded.sid) {
+        if (typeof decoded !== "object" || !decoded.aud?.length) {
           return rejectOrContinue("INVALID_PAYLOAD");
         }
 

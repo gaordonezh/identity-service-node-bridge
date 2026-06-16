@@ -4,6 +4,7 @@ interface GetAccessTokenRequestBody {
   identityServiceHost: string;
   clientId: string;
   accessCode: string;
+  origin: string;
 }
 
 interface CachedParams {
@@ -23,7 +24,7 @@ const cached: CachedParams = {
   promise: null,
 };
 
-async function getAccessToken({ accessCode, clientId, identityServiceHost }: GetAccessTokenRequestBody) {
+async function getAccessToken({ accessCode, clientId, identityServiceHost, origin }: GetAccessTokenRequestBody) {
   const now = Date.now();
 
   if (cached.token && cached.expires && now < cached.expires) {
@@ -35,10 +36,18 @@ async function getAccessToken({ accessCode, clientId, identityServiceHost }: Get
   }
 
   cached.promise = axios
-    .post<CredentialsResponse>(identityServiceHost + "/auth/client-credentials", {
-      client_id: clientId,
-      clientAccessToken: accessCode,
-    })
+    .post<CredentialsResponse>(
+      identityServiceHost + "/auth/client-credentials",
+      {
+        client_id: clientId,
+        clientAccessToken: accessCode,
+      },
+      {
+        headers: {
+          "x-origin": origin,
+        },
+      },
+    )
     .then((res) => {
       cached.token = res.data.accessToken;
       cached.expires = Date.now() + res.data.expiresIn - 10000;
@@ -56,13 +65,13 @@ async function getAccessToken({ accessCode, clientId, identityServiceHost }: Get
   return cached.promise;
 }
 
-async function axiosRequestInterceptor(config: InternalAxiosRequestConfig<any>, body: GetAccessTokenRequestBody) {
+export async function axiosRequestInterceptor(config: InternalAxiosRequestConfig<any>, body: GetAccessTokenRequestBody) {
   const token = await getAccessToken(body);
   config.headers.Authorization = `Bearer ${token}`;
   return config;
 }
 
-async function axiosResponseInterceptor(error: any) {
+export async function axiosResponseInterceptor(error: any) {
   if (error.response?.status === 401) {
     cached.token = "";
     cached.expires = 0;
@@ -70,5 +79,3 @@ async function axiosResponseInterceptor(error: any) {
 
   return Promise.reject(error);
 }
-
-export { axiosRequestInterceptor, axiosResponseInterceptor };
