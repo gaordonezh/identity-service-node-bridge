@@ -11,7 +11,7 @@ const cached = {
     expires: 0,
     promise: null,
 };
-async function getAccessToken({ accessCode, clientId, identityServiceHost }) {
+async function getAccessToken({ accessCode, clientId, identityServiceHost, origin }) {
     const now = Date.now();
     if (cached.token && cached.expires && now < cached.expires) {
         return cached.token;
@@ -23,6 +23,10 @@ async function getAccessToken({ accessCode, clientId, identityServiceHost }) {
         .post(identityServiceHost + "/auth/client-credentials", {
         client_id: clientId,
         clientAccessToken: accessCode,
+    }, {
+        headers: {
+            "x-origin": origin,
+        },
     })
         .then((res) => {
         cached.token = res.data.accessToken;
