@@ -4,7 +4,6 @@ interface GetAccessTokenRequestBody {
   identityServiceHost: string;
   clientId: string;
   accessCode: string;
-  origin: string;
 }
 
 interface CachedParams {
@@ -24,7 +23,7 @@ const cached: CachedParams = {
   promise: null,
 };
 
-async function getAccessToken({ accessCode, clientId, identityServiceHost, origin }: GetAccessTokenRequestBody) {
+async function getAccessToken({ accessCode, clientId, identityServiceHost }: GetAccessTokenRequestBody) {
   const now = Date.now();
 
   if (cached.token && cached.expires && now < cached.expires) {
@@ -36,18 +35,10 @@ async function getAccessToken({ accessCode, clientId, identityServiceHost, origi
   }
 
   cached.promise = axios
-    .post<CredentialsResponse>(
-      identityServiceHost + "/auth/client-credentials",
-      {
-        client_id: clientId,
-        clientAccessToken: accessCode,
-      },
-      {
-        headers: {
-          "x-origin": origin,
-        },
-      },
-    )
+    .post<CredentialsResponse>(identityServiceHost + "/auth/client-credentials", {
+      client_id: clientId,
+      clientAccessToken: accessCode,
+    })
     .then((res) => {
       cached.token = res.data.accessToken;
       cached.expires = Date.now() + res.data.expiresIn - 10000;
