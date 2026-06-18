@@ -3,7 +3,6 @@ interface GetAccessTokenRequestBody {
     identityServiceHost: string;
     clientId: string;
     accessCode: string;
-    origin: string;
 }
 export declare function axiosRequestInterceptor(config: InternalAxiosRequestConfig<any>, body: GetAccessTokenRequestBody): Promise<axios.InternalAxiosRequestConfig<any>>;
 export declare function axiosResponseInterceptor(error: any): Promise<never>;
